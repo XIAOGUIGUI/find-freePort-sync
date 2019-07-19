@@ -1,0 +1,29 @@
+{
+  "name": "find-port-free-sync",
+  "version": "1.0.0",
+  "description": "Find free port synchronously, useful when you need to get the port directly without callback.",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha __tests__",
+    "cover": "istanbul cover node_modules/mocha/bin/_mocha __tests__",
+    "coveralls": "npm run cover -- --report lcovonly && cat ./coverage/lcov.info | coveralls"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/XIAOGUIGUI/find-port-free-sync.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/XIAOGUIGUI/find-port-free-sync/issues"
+  },
+  "homepage": "https://github.com/XIAOGUIGUI/find-port-free-sync#readme",
+  "devDependencies": {
+    "expect": "^23.6.0",
+    "mocha": "^5.2.0"
+  },
+  "dependencies": {
+    "coveralls": "^3.0.2",
+    "istanbul": "^0.4.5"
+  }
+}
