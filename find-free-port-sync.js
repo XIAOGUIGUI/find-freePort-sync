@@ -95,7 +95,9 @@ FindFreePortSync.prototype = {
             });
 
             usedPorts = res.match(reg);
-            usedPorts = usedPorts.join(' ').match(reg1);
+            if (usedPorts) {
+              usedPorts = usedPorts.join(' ').match(reg1);
+            }
 
             // special address usage for  ip.port
             if (!usedPorts) {
