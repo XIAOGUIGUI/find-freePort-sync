@@ -84,8 +84,8 @@ FindFreePortSync.prototype = {
             freePort = null,
             res = '',
             portSplitStr = ':',
-            reg = new RegExp(`\\s(${this.ip}|*]):(\\d+).*ESTABLISHED`, 'g'),
-            reg1 = new RegExp(`\\s(${this.ip}|*]):(\\d+)\\s`, 'g'),
+            reg = new RegExp(`\\s([${this.ip}|*]):(\\d+).*[ESTABLISHED|LISTEN]`, 'g'),
+            reg1 = new RegExp(`\\s([${this.ip}|*]):(\\d+)\\s`, 'g'),
             regSpecial = new RegExp(`\\s([${this._ipSpecial}|*])\\.(\\d+)\\s`, 'g');
 
         try {
@@ -93,6 +93,7 @@ FindFreePortSync.prototype = {
             res = execSync('netstat -an', {
                 encoding: 'utf-8'
             });
+            console.log(res)
 
             usedPorts = res.match(reg);
             if (usedPorts) {
