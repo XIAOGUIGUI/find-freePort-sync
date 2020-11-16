@@ -1,6 +1,6 @@
 {
   "name": "find-port-free-sync",
-  "version": "1.0.3",
+  "version": "1.0.5",
   "description": "Find free port synchronously, useful when you need to get the port directly without callback.",
   "main": "index.js",
   "scripts": {
@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "coveralls": "^3.0.2",
-    "istanbul": "^0.4.5"
+    "istanbul": "^0.4.5",
+    "user": "0.0.0"
   }
 }

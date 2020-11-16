@@ -93,7 +93,6 @@ FindFreePortSync.prototype = {
             res = execSync('netstat -an', {
                 encoding: 'utf-8'
             });
-            console.log(res)
 
             usedPorts = res.match(reg);
             if (usedPorts) {
