@@ -16,8 +16,6 @@ function FindFreePortSync(options = {}) {
         // specify ip for scan
         ip: '0.0.0.0|127.0.0.1',
         // for inner usage, some platforms like darkwin shows commom address 0.0.0.0:10000 as *.10000
-        _ipSpecial: '\\*|127.0.0.1',
-        // scan this port
         port: null
     };
 
@@ -60,9 +58,6 @@ FindFreePortSync.prototype = {
         }
 
         options.num = isNaN(parseInt(options.num)) ? this.defaultOptions.num : parseInt(options.num);
-
-        options._ipSpecial = options.ip ? options.ip : this.defaultOptions._ipSpecial;
-
         Object.assign(this, this.defaultOptions, options);
     },
 
@@ -79,43 +74,35 @@ FindFreePortSync.prototype = {
      * @return {[type]} [description]
      */
     getPort() {
-        let stepIndex = 0,
-            maxStep = 65536,
-            freePort = null,
-            res = '',
-            portSplitStr = ':',
-            reg = new RegExp(`\\s([${this.ip}|*]):(\\d+).*[ESTABLISHED|LISTEN]`, 'g'),
-            reg1 = new RegExp(`\\s([${this.ip}|*]):(\\d+)\\s`, 'g'),
-            regSpecial = new RegExp(`\\s([${this._ipSpecial}|*])\\.(\\d+)\\s`, 'g');
-
+        let stepIndex = 0;
+        let maxStep = 65536
+        let freePort = null
+        let res = ''
+        let portSplitStr = '.'
+        let ipReg = this.ip.replace(/\./g, '\\.') + '|'
+        let reg = new RegExp(`\\s(${ipReg}0\\.0\\.0\\.0|127\\.0\\.0\\.1|\\*)[\\:\\.](\\d+).*(LISTEN|ESTABLISHED)`, 'g')
+        let regIpAndPort = new RegExp(`(${ipReg}0\\.0\\.0\\.0|127\\.0\\.0\\.1|\\*)[\\:\\.](\\d+)`, 'g')
         try {
             // get network state list
             res = execSync('netstat -an', {
                 encoding: 'utf-8'
             });
-
             usedPorts = res.match(reg);
             if (usedPorts) {
-              usedPorts = usedPorts.join(' ').match(reg1);
+              usedPorts = usedPorts.join('').match(regIpAndPort)
+              if (usedPorts[0].indexOf(':') > -1) {
+                portSplitStr = ':'
+              }
             }
-
-            // special address usage for  ip.port
-            if (!usedPorts) {
-                usedPorts = res.match(regSpecial);
-                portSplitStr = '.';
-            }
-
             usedPorts = !usedPorts ? [] : usedPorts.map(item => {
-                let port = item.split(portSplitStr);
-                port = port.slice(-1)[0];
-                return parseInt(port.slice(0, -1), 10);
+                let ipList = item.split(portSplitStr);
+                let port = ipList[ipList.length - 1]
+                port = parseInt(port, 10)
             });
 
             // check the port if usage and return directly
             if (this.port) {
-                return !usedPorts.includes(this.port)
-                    ? false
-                    : (this.port >= this.start && this.port <= this.end);
+              return !usedPorts.includes(this.port) ? false : (this.port >= this.start && this.port <= this.end);
             }
 
             usedPorts = [...new Set(usedPorts)];
@@ -143,13 +130,12 @@ FindFreePortSync.prototype = {
             freePort = [];
 
             for (let i = this.end, n = 1; i >= this.start; --i) {
-                if (!usedPorts.includes(i)) {
-                    if (n++ > this.num) {
-                        continue;
-                    }
-
-                    freePort.push(i);
+              if (!usedPorts.includes(i)) {
+                if (n++ > this.num) {
+                  continue;
                 }
+                freePort.push(i);
+              }
             }
 
             if (!freePort.length) {
