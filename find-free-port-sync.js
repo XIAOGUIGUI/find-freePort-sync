@@ -97,7 +97,7 @@ FindFreePortSync.prototype = {
             usedPorts = !usedPorts ? [] : usedPorts.map(item => {
                 let ipList = item.split(portSplitStr);
                 let port = ipList[ipList.length - 1]
-                port = parseInt(port, 10)
+                return parseInt(port, 10)
             });
 
             // check the port if usage and return directly
